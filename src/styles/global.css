@@ -1,0 +1,52 @@
+html, body { margin: 0; padding: 0; height: 100%; }
+#root { height: 100%; }
+.app-root { min-height: 100vh; }
+
+/*
+  Toast container positioning fix (parity C29).
+  DSR's ToastContainer renders the SLDS 1 class name `slds-notify-container`
+  (single hyphen), but SLDS 2 (Cosmos) only positions `.slds-notify_container`
+  / `.slds-notify--container` (underscore / double-hyphen). Since the app runs
+  SLDS 2, the DSR container gets no fixed positioning and toasts render in
+  normal flow at the bottom of the page (below the footer) instead of pinned
+  to the top of the viewport like the LWC reference. Re-apply the SLDS 2
+  container rule to the class DSR actually emits.
+*/
+.slds-notify-container {
+  position: fixed;
+  width: 100%;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  z-index: 1000;
+  text-align: center;
+}
+
+/*
+  Card heading parity (C01). DSR's Card renders the title as a bare
+  `<h2 class="slds-text-heading_small">` (16px, on-surface-1 gray in SLDS 2),
+  whereas the LWC `lightning-card` title renders at 20px in the navy
+  on-surface-3 heading color. Scope the correction to `.slds-card__header` so
+  it matches LWC across Home / Icons / Contacts cards WITHOUT touching the
+  intro heading (24px, custom markup) or the popover headings (already 20px).
+  on-surface-3 is `light-dark(#03234d, #d8e6fe)`, so dark mode stays correct.
+*/
+.slds-card__header .slds-text-heading_small {
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/*
+  Standard-icon glyph color in Dark mode (parity C23). SLDS 2 sets the icon
+  glyph fill from `--slds-c-icon-color-foreground` and, when that is unset,
+  falls back to `--slds-g-color-neutral-base-100` = light-dark(#fff, #000) — so
+  a standard icon's glyph is white in Light but turns BLACK in Dark, vanishing
+  against its colored (e.g. purple contact) tile. LWC keeps standard glyphs
+  white in both schemes. Pin the foreground to on-accent-1 (#fff): standard
+  icons always sit on a saturated colored background, so white is correct in
+  both color schemes. Scoped to standard icons only (utility/action icons
+  inherit currentColor and must stay theme-aware).
+*/
+[class*='slds-icon-standard-'] > .slds-icon,
+[class*='slds-icon-standard-'].slds-icon {
+  --slds-c-icon-color-foreground: var(--slds-g-color-on-accent-1, #fff);
+}

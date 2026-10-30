@@ -1,0 +1,97 @@
+.c-contact-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* Generous vertical row spacing (1.5rem) + tighter column gap, matching the
+     LWC read-only record layout whose taller rows give the card more height
+     (parity C20/A13). */
+  gap: 1.5rem 1rem;
+}
+
+/* Read-only field labels are bold with clear separation from their value,
+   like the LWC lightning-input read-only label (parity C20/A12). */
+.c-contact-details-grid .slds-form-element__label {
+  font-weight: var(--slds-g-font-weight-bold, 700);
+  margin-bottom: 0.25rem;
+}
+
+/* Contacts list-view parity with the LWC lightning-datatable ------------- */
+
+/* Row-number column: narrow, right-aligned, muted — mirrors the LWC
+   `show-row-number-column`. DSR auto-injects the selection checkbox as the
+   first column, so this number column renders just after it (LWC orders them
+   number-then-checkbox; DSR's public API offers no way to reorder the
+   auto-injected checkbox, so the small ordering difference is accepted). */
+.contacts-list__row-number {
+  width: 3.25rem;
+  text-align: right;
+  /* Theme-aware muted gray = light-dark(#5c5c5c, #aeaeae). The old
+     neutral-base-50 (#757575) is a fixed value that read far too dim in Dark
+     mode; on-surface-1 tracks the body-cell muting in both schemes and hits
+     the LWC Dark row-number/body value #aeaeae (parity C21). */
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: 0.75rem;
+}
+
+/* Body text in every data cell shares that muted gray so plain-text cells
+   (Account Name, Title) match LWC — white-on-dark was too bright in Dark and
+   the near-black default was too dark in Light (parity C21). The name/phone/
+   email links carry their own color, so this only tints the plain cells. */
+#contacts-table tbody td {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Name cell: bold themed link (LWC 'button' column, variant="base"). Uses the
+   same theme-aware link token as the sibling phone/email <a> links
+   (accent-2 = light-dark(#0250d9, #7cb1fe)) so the name matches them in both
+   schemes; the old accent-base-40 is undefined in SLDS 2 cosmos, so it fell
+   back to a fixed #0176d3 that stayed dark-blue in Dark (parity C19).
+   inline-flex + min-height matches the LWC 32px datatable button, lifting the
+   row to the LWC ~48px density instead of ~37px (parity C17). */
+.contacts-list__name-link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+}
+.contacts-list__name-link:hover,
+.contacts-list__name-link:focus {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  text-decoration: underline;
+}
+
+/* Email cell: envelope glyph sits inline before the mailto link, with a wider
+   gap before the address to match the LWC email column (parity C22). */
+.contacts-list__email-icon {
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+.contacts-list__email-link {
+  display: inline-flex;
+  align-items: center;
+}
+
+.c-contact-details-grid__full {
+  grid-column: 1 / -1;
+}
+
+/* SLDS `slds-form-element_readonly` draws a bottom rule under each static
+   value; the LWC page (lightning-input read-only) renders none, so strip it
+   to keep the plain label + value pairs the LWC record-home shows. */
+.c-contact-details-grid .slds-form-element_readonly {
+  border-bottom: none;
+}
+
+.c-contact-details-grid .slds-form-element__static {
+  border-bottom: none;
+  padding: 0;
+}
+
+/* The Description value reads bold and carries a faint baseline underneath,
+   matching the LWC read-only textarea (parity C20). Higher-specificity than
+   the border-strip rule above, and placed after it, so it wins. */
+.c-contact-details-grid__full .slds-form-element__static {
+  font-weight: var(--slds-g-font-weight-bold, 700);
+  padding-bottom: 0.5rem;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #e5e5e5);
+}

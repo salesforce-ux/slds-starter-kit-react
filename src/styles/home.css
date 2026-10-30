@@ -1,0 +1,40 @@
+.slds-card {
+  --slds-c-card-body-spacing-inline: var(--slds-g-spacing-var-inline-4, 1rem);
+}
+
+.spinner-demo {
+  height: 100px;
+  /* The DSR Spinner's .slds-spinner_container carries SLDS z-index 9051, which
+     is ABOVE the modal backdrop (9000). .slds-is-relative alone (position:
+     relative, z-index auto) doesn't create a stacking context, so the spinner
+     would otherwise paint on top of an open modal. isolation:isolate traps the
+     spinner's stacking inside this box, keeping it under the modal overlay. */
+  isolation: isolate;
+}
+
+.popover-demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-8, 2rem);
+  align-items: flex-start;
+}
+
+.popover-demo .slds-popover {
+  max-width: var(--slds-g-sizing-15, 20rem);
+}
+
+@media (min-width: 48em) {
+  .home-input-item-second {
+    margin-top: 0;
+  }
+}
+
+/*
+  DSR's DatePicker wraps its input in an inline-block `.slds-dropdown-trigger`,
+  so the field collapses to the browser's default input width (~187px) instead
+  of filling its grid column like the sibling text/phone inputs. Make the
+  trigger block-level so the input stretches to the column width (parity C02).
+*/
+.home-datepicker {
+  display: block;
+}

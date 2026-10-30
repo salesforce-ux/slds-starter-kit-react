@@ -1,0 +1,187 @@
+/* Root paints the neutral page surface (mirrors LWC shell/app.css `:host`).
+   The token is version- and color-scheme-aware: gray in SLDS 2 light, dark in
+   dark mode, and — critically — it covers the SLDS 1 stylesheet's lavender
+   `html` background (rgb(238,244,255)), which would otherwise bleed through
+   React's transparent content area (LWC's `<shell-app>` always covers it). */
+/* A definite viewport height (not min-height) makes `.app-body` the sole
+   scroll container, so the global header + navigation — and the vertical rail —
+   stay pinned while the page content scrolls beneath them, matching LWC's
+   `.app-root { height: 100vh }` (parity A02). overflow:hidden keeps the scroll
+   inside `.app-body` rather than the window. */
+.app-root { display: flex; flex-direction: column; height: 100vh; overflow: hidden; background-color: var(--slds-g-color-surface-2, #f3f3f3); }
+.app-body { flex: 1 1 auto; overflow: auto; min-width: 0; }
+/* Horizontal row holding the scrolling body and the docked side panel (A01);
+   min-height:0 lets the body scroll instead of stretching the column. */
+.app-root__content { display: flex; flex: 1 1 auto; min-height: 0; }
+/* The LWC shell lets page content fill the full body width (measured: content
+   spans the viewport minus SLDS's ~16px page padding, no max-width cap). An
+   earlier 80rem/1280px cap here made every page — Contacts list AND record
+   detail — render narrower than LWC on wide windows. Fill the width to match. */
+.app-main__inner { width: 100%; }
+
+/* Bare button wrapping the profile Avatar so it reads as a clickable trigger
+   without the default <button> chrome (the Avatar supplies the visuals). */
+.profile-menu__trigger {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.profile-menu__trigger:focus-visible {
+  outline: 2px solid var(--slds-g-color-border-brand-1, #0176d3);
+  outline-offset: 2px;
+}
+
+/* Header background follows the color scheme, mirroring LWC globalHeader.css
+   (`--_slds-c-globalheader-color-background: var(--slds-g-color-surface-
+   container-1, #fff)`). That token is `light-dark(#fff, #242424)`, so the bar
+   is white in light mode and #242424 in dark. Without this the SLDS default
+   keeps the bar white while its token-aware children (search field, favorites
+   pill) turn dark — the inconsistent white-bar-with-dark-boxes the LWC header
+   never shows (LWC goes fully dark). */
+.slds-global-header {
+  --_slds-c-globalheader-color-background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+
+/* LWC renders the header action icons in a muted neutral gray. DSR's
+   variant="icon" applies .slds-button_icon, which the cosmos theme tints
+   brand-blue, so the glyphs came out blue; override the fill. Use the same
+   color-scheme-aware pairing LWC uses (globalHeader.css:
+   light-dark(neutral-60, neutral-40)) so the icons stay legible on the now
+   dark-aware header — neutral-60 gray on the white bar, the lighter
+   neutral-40 on the #242424 dark bar. */
+.global-header__actions .slds-button__icon {
+  fill: light-dark(var(--slds-g-color-palette-neutral-60, #5c5c5c), var(--slds-g-color-palette-neutral-40, #939393));
+}
+.global-header__actions .slds-button:hover .slds-button__icon,
+.global-header__actions .slds-button:focus .slds-button__icon {
+  fill: light-dark(var(--slds-g-color-palette-neutral-50, #444), var(--slds-g-color-palette-neutral-30, #aeaeae));
+}
+
+/* Vertical navigation rail (ported from LWC ui/verticalNav). Rendered only
+   when Vertical Nav is enabled from the profile menu; the app-root flips to a
+   row so this sits left of the shell column. */
+.app-root_with-vertical-nav { flex-direction: row; }
+/* Column sitting right of the rail: shell + body + panel, so the rail can be
+   a flex sibling in a row layout instead of nesting inside the shell. */
+.app-root__column { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; min-height: 0; }
+.app-root__vertical-nav {
+  flex-shrink: 0;
+  /* Fill the full row height (LWC's rail is `height: 100%` because its
+     `.app-root` has a definite `height: 100vh`). React's `.app-root` uses
+     `min-height: 100vh` — no definite height — so `height: 100%` here would
+     resolve to `auto` AND, being a non-auto value, would also block the flex
+     `align-items: stretch` default, collapsing the navy rail to its content
+     height. `align-self: stretch` fills the row instead (viewport-tall, or
+     content-tall when the page scrolls), keeping the navy full-height. */
+  align-self: stretch;
+  background-color: var(--slds-g-color-brand-base-20, #e5e5e5);
+}
+.vertical-nav {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  width: 4.875rem;
+}
+.vertical-nav::-webkit-scrollbar { width: 0; height: 0; }
+.vertical-nav__list { list-style: none; padding: 0.5rem; padding-top: 1rem; margin: 0; }
+.vertical-nav__item + .vertical-nav__item { margin-top: 0.375rem; }
+.vertical-nav__link {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  text-decoration: none; color: var(--slds-g-color-on-accent-1, #fff);
+  border-radius: 0.5rem; padding: 0.25rem;
+}
+/* Keep the label white on hover/focus. LWC's rail link is shadow-scoped, so
+   the global SLDS/cosmos `a:hover` brand-blue rule never reaches it; React's
+   link lives in the light DOM, where that rule overrides the base white and
+   paints the label blue-on-navy. Re-assert the on-accent white here (LWC's
+   own hover rule only clears the outline — the color stays white). */
+.vertical-nav__link:hover, .vertical-nav__link:focus {
+  outline: none;
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+.vertical-nav__tile {
+  display: flex; align-items: center; justify-content: center;
+  height: calc(2.25rem + 0.5rem); width: calc(2.25rem + 0.5rem);
+  border-radius: 0.5rem; border: 2px solid transparent; transition: outline 0.1s ease;
+}
+.vertical-nav__link:hover .vertical-nav__tile,
+.vertical-nav__link:focus .vertical-nav__tile {
+  outline: 2px solid var(--slds-g-color-border-inverse-1, #f3f3f3);
+}
+.vertical-nav__link_selected .vertical-nav__tile {
+  border-color: var(--slds-g-color-border-inverse-1, #f3f3f3);
+}
+/* Compact rail captions (parity A08): the LWC rail uses smaller, lighter
+   labels with tight leading so Console/Builder sit higher; our 0.75rem/600
+   labels ran larger and taller. */
+.vertical-nav__label {
+  font-size: 0.6875rem; font-weight: 400; line-height: 1.15;
+  padding-top: 0.125rem; overflow-wrap: anywhere;
+}
+
+/* Console object-switcher "main" tab. LWC renders it as a <button role="tab">
+   and resets the native button chrome in globalNavigation.css
+   (`button[role="tab"] { border: none; background: none; font/color:
+   inherit }`). Without that reset the browser's default button background
+   (rgb(239,239,239)) shows as a gray box behind the tab label — LWC's tab is
+   transparent. Port the same reset, scoped to the context bar. */
+.slds-context-bar button[role='tab'] {
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* App launcher (waffle) dropdown. The trigger wrapper needs position:
+   relative so the absolutely-positioned SLDS dropdown anchors to the waffle
+   button instead of the page. */
+.slds-context-bar__primary .app-launcher-trigger { position: relative; }
+/* Anchor the menu to the *bottom* of the waffle trigger (parity C14). The base
+   .slds-dropdown sets neither top nor bottom, so with both auto it falls back
+   to its static position — which, inside the short context-bar row, floats it
+   up over the logo/app-name. Pin it below the trigger with a small gap, like
+   the LWC app launcher which drops down beneath the waffle. */
+.slds-context-bar__primary .app-launcher-trigger .slds-dropdown {
+  inset-block-start: 100%;
+  inset-block-end: auto;
+  inset-inline-start: 0;
+  margin-block-start: 0.25rem;
+}
+
+/* Docked side panel (parity A01). Fixed ~320px, in-flow as a flex sibling of
+   `.app-body`, so opening it narrows the content area (rather than overlaying
+   it). A leading border separates it from the page like the LWC docked panel. */
+.app-panel {
+  flex: 0 0 20rem;
+  width: 20rem;
+  border-inline-start: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #e5e5e5);
+}
+/* Header row: title takes the slack so the close button sits at the far end. */
+.app-panel .slds-panel__header-title { flex: 1 1 auto; min-width: 0; }
+
+/* Profile settings menu (parity C13). The cosmos theme tints selection checks
+   with accent-blue (.slds-dropdown__item .slds-icon_selected → accent-2); the
+   LWC profileMenu shows neutral-gray checks, so re-point the icon foreground.
+   A little more block padding per row and section header restores the LWC
+   spacing the compressed cosmos default lost. */
+.profile-menu__dropdown .slds-dropdown__item .slds-icon_selected {
+  --slds-c-icon-color-foreground: var(--slds-g-color-on-surface-2, #444444);
+}
+.profile-menu__dropdown .slds-dropdown__item > a {
+  padding-block: 0.5rem;
+}
+.profile-menu__dropdown .slds-dropdown__header {
+  padding-block: 0.5rem 0.25rem;
+}
+
+/* A header action button reads as pressed while its panel is open: tint the
+   glyph with the accent color (overrides the muted neutral fill above; 3-class
+   specificity beats the base + hover rules without !important). */
+.global-header__actions .global-header__action_active .slds-button__icon {
+  fill: var(--slds-g-color-accent-2, #0250d9);
+}

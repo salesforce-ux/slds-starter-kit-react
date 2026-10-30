@@ -1,0 +1,12 @@
+node_modules
+dist
+.vite
+coverage
+test-results
+playwright-report
+tests/e2e/**/*-actual.png
+tests/e2e/**/*-diff.png
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+.DS_Store

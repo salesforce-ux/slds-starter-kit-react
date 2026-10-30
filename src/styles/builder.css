@@ -1,0 +1,50 @@
+/* Builder page chrome. Ports the LWC `page/builder` + `ui/panel` styles.
+   The LWC builder uses `:host { height: 100% }` inside the app shell; here
+   Builder renders full-screen (App bypasses the global shell), so the root
+   fills the viewport directly. */
+html.builder-active {
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
+}
+
+.builder-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.builder-body {
+  flex: 1 1 0;
+  min-height: 0;
+  z-index: 1;
+}
+
+.builder-rail {
+  flex: 0 0 var(--slds-g-sizing-15, 20rem);
+  width: var(--slds-g-sizing-15, 20rem);
+  max-width: var(--slds-g-sizing-15, 20rem);
+  height: 100%;
+  min-height: 0;
+}
+
+.builder-canvas {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  background-color: var(--slds-g-color-surface-2, #f3f3f3);
+}
+
+.builder-canvas__empty {
+  height: 100%;
+}
+
+/* Mirrors the LWC `ui/panel` :host — the docked-panel content is a flex column
+   so the header stays pinned and the body scrolls. */
+.builder-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}

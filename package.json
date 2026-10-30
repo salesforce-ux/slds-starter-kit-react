@@ -1,0 +1,50 @@
+{
+  "name": "slds-starter-kit-react",
+  "version": "1.0.0",
+  "description": "Starter template for prototyping Salesforce experiences with React, Vite, SLDS, and design-system-react",
+  "author": "Salesforce UX",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build:gh-pages && gh-pages -d dist --nojekyll",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots",
+    "build:gh-pages": "tsc -b && vite build --mode gh-pages",
+    "test:e2e:pages": "playwright test --config playwright.pages.config.ts"
+  },
+  "dependencies": {
+    "@salesforce-ux/design-system": "2.29.0",
+    "@salesforce-ux/design-system-2": "^2.264.1",
+    "@salesforce/design-system-react": "11.0.0-alpha.5",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "overrides": {
+    "@salesforce/design-system-react": {
+      "@salesforce-ux/design-system": "$@salesforce-ux/design-system"
+    }
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.47.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.4.0",
+    "@testing-library/react": "^16.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "gh-pages": "^6.3.0",
+    "jsdom": "^25.0.0",
+    "typescript": "^5.6.0",
+    "vite": "^7.3.1",
+    "vite-plugin-static-copy": "^4.1.0",
+    "vitest": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}
